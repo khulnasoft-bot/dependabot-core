@@ -42,21 +42,28 @@ RSpec.describe Dependabot::Maven::VersionParser do
 
     context "with a nil version" do
       let(:version) { nil }
-
-      let(:err_msg) { "Malformed version string #{version}" }
+      let(:err_msg) { "Malformed version string - string is nil" }
 
       it "raises an exception" do
-        expect { described_class.parse(version) }.to raise_error(ArgumentError, err_msg)
+        expect { described_class.parse(version) }.to raise_error(Dependabot::BadRequirementError, err_msg)
       end
     end
 
     context "with a malformed version" do
       let(:version) { "" }
-
-      let(:err_msg) { "Malformed version string #{version}" }
+      let(:err_msg) { "Malformed version string - string is empty" }
 
       it "raises an exception" do
-        expect { described_class.parse(version) }.to raise_error(ArgumentError, err_msg)
+        expect { described_class.parse(version) }.to raise_error(Dependabot::BadRequirementError, err_msg)
+      end
+    end
+
+    context "with a malformed version" do
+      let(:version) { "RELEASE&802" }
+      let(:err_msg) { "Malformed version string - #{version}" }
+
+      it "raises an exception" do
+        expect { described_class.parse(version) }.to raise_error(Dependabot::BadRequirementError, err_msg)
       end
     end
   end
